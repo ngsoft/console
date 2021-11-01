@@ -16,7 +16,7 @@
     "require-dev": {},
     "require": {
         "php": ">=7.4",
-        "ngsoft/stdio": "~3.0"
+        "ngsoft/stdio": "^3"
     },
     "autoload": {
         "psr-4": {
