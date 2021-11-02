@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace NGSOFT\Console\Interfaces;
 
 use NGSOFT\{
-    Console\Option, STDIO
+    Console\Argument, STDIO
 };
 
 /**
@@ -32,9 +32,9 @@ interface Command extends ExitCodes {
     /**
      * Get Command Options
      *
-     * @return Option[]
+     * @return Argument[]
      */
-    public function getOptions(): array;
+    public function getArguments(): array;
 
     /**
      * Executes the command
