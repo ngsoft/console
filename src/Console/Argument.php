@@ -147,6 +147,24 @@ class Argument {
     }
 
     /**
+     * Get Value Type
+     *
+     * @return string
+     */
+    public function getType(): string {
+        return $this->type;
+    }
+
+    /**
+     * Argument can be null?
+     *
+     * @return bool
+     */
+    public function getNullable(): bool {
+        return $this->nullable;
+    }
+
+    /**
      * Get Argument Type
      *
      * @return int
