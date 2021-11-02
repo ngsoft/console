@@ -39,7 +39,7 @@ interface Command extends ExitCodes {
     /**
      * Executes the command
      *
-     * @param array $arguments
+     * @param array<string,mixed> $arguments Parsed arguments
      * @param STDIO $io
      *
      * @return int Exit Code to return to the shell
