@@ -23,11 +23,11 @@ interface Command extends ExitCodes {
     public function getName(): string;
 
     /**
-     * Get Command Description
+     * Get Command Help message
      *
      * @return string
      */
-    public function getDescription(): string;
+    public function getHelp(): string;
 
     /**
      * Get Command Options

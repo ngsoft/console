@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace NGSOFT\Console;
 
-use InvalidArgumentException;
+use InvalidArgumentException,
+    RuntimeException;
 use function get_debug_type;
 
 class Argument {
@@ -51,6 +52,9 @@ class Argument {
     protected $name;
 
     /** @var string */
+    protected $help;
+
+    /** @var string */
     protected $short = '';
 
     /** @var string */
@@ -65,26 +69,34 @@ class Argument {
     /** @var mixed */
     protected $value = null;
 
+    /** @var ?callable */
+    protected $transformCallable;
+
+    /** @var ?callable */
+    protected $validationCallable;
+
     ////////////////////////////   Initialization   ////////////////////////////
 
     /**
      * Creates a new Argument
-     * @param string $name
+     * @param string $name Argument help
+     * @param string $help Message to display with help command
      * @return static
      */
-    public static function create(string $name) {
-        return new static($name);
+    public static function create(string $name, string $help) {
+        return new static($name, $help);
     }
 
     /**
      * Creates a new Argument
      * @param string $name
      */
-    public function __construct(string $name) {
+    public function __construct(string $name, string $help) {
         if (false === preg_match(self::NAME_REGEX, $name)) {
             throw new InvalidArgumentException('Invalid name ' . $name);
         }
         $this->name = $name;
+        $this->help = $help;
     }
 
     ////////////////////////////   Getters   ////////////////////////////
@@ -96,6 +108,14 @@ class Argument {
      */
     public function getName(): string {
         return $this->name;
+    }
+
+    /**
+     * Get Help message
+     * @return string
+     */
+    public function getHelp(): string {
+        return $this->help;
     }
 
     /**
@@ -138,6 +158,28 @@ class Argument {
     }
 
     ////////////////////////////   Setters   ////////////////////////////
+
+    /**
+     * Set a callback to transform parsed value
+     *
+     * @param callable $transformCallable
+     * @return static
+     */
+    public function setTransformCallable(callable $transformCallable) {
+        $this->transformCallable = $transformCallable;
+        return $this;
+    }
+
+    /**
+     * Set a callback to validate a value
+     *
+     * @param callable $validationCallable
+     * @return static
+     */
+    public function setValidationCallable(callable $validationCallable) {
+        $this->validationCallable = $validationCallable;
+        return $this;
+    }
 
     /**
      * Set Short flag
@@ -200,6 +242,53 @@ class Argument {
 
         $this->value = $value;
         return $this;
+    }
+
+    ////////////////////////////   Internals   ////////////////////////////
+
+    /**
+     * Transform the value
+     *
+     * @internal
+     * @param mixed $value
+     * @return mixed
+     */
+    public function transformValue($value) {
+
+        if (is_callable($this->transformCallable)) {
+            return call_user_func($this->transformCallable, $value);
+        }
+
+        if (is_numeric($value)) {
+            if ($this->type == self::TYPE_INT) return intval($value);
+            elseif ($this->type == self::TYPE_FLOAT) return floatval($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Validate the value
+     *
+     * @internal
+     * @param type $value
+     * @return bool
+     */
+    public function validateValue($value): bool {
+        if (is_callable($this->validationCallable)) {
+            $return = call_user_func($this->validationCallable, $value);
+            if (!is_bool($return)) {
+                throw new RuntimeException(sprintf('Invalid return value for validation callback in Argument "%s", boolean requested but %s given', $this->name, get_debug_type($retval)));
+            }
+            return $return;
+        }
+
+        if ($this->nullable and is_null($value)) return true;
+        if ($this->type == self::TYPE_FLOAT or $this->type == self::TYPE_INT) {
+            return is_numeric($value);
+        }
+        if ($this->type == self::TYPE_BOOL) return is_bool($value);
+        return is_string($value);
     }
 
     ////////////////////////////   Configuration   ////////////////////////////
