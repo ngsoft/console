@@ -42,8 +42,8 @@ class Argument {
      * Argument validation
      */
     protected const NAME_REGEX = '/^[a-z][\w\-]*$/i';
-    protected const SHORT_REGEX = '/^\-[a-z0-9]$/i';
-    protected const LONG_REGEX = '/^[\-]{2}[a-z][\w\-]+$/i';
+    protected const SHORT_REGEX = '/^\-[a-z0-9]$/';
+    protected const LONG_REGEX = '/^[\-]{2}[a-z][\w\-]+$/';
     protected const TYPES = [
         self::TYPE_STRING, self::TYPE_INT, self::TYPE_FLOAT, self::TYPE_BOOL, 'null'
     ];
@@ -90,6 +90,7 @@ class Argument {
     /**
      * Creates a new Argument
      * @param string $name
+     * @param string $help
      */
     public function __construct(string $name, string $help) {
         if (false === preg_match(self::NAME_REGEX, $name)) {
