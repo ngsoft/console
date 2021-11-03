@@ -37,15 +37,25 @@ class Argument {
     public const TYPE_INT = 'int';
     public const TYPE_FLOAT = 'float';
     public const TYPE_BOOL = 'bool';
+    public const TYPE_ARRAY = 'array';
 
     /**
-     * Argument validation
+     * Argument name validation
      */
     protected const NAME_REGEX = '/^[a-z][\w\-]*$/i';
-    protected const SHORT_REGEX = '/^\-[a-z0-9]$/';
+
+    /**
+     * Accepts only letters, lowercase or uppercase
+     * as an argument value can be a negative integer
+     */
+    protected const SHORT_REGEX = '/^\-[a-z]$/i';
+
+    /**
+     * Only lowercase chars with - and _
+     */
     protected const LONG_REGEX = '/^[\-]{2}[a-z][\w\-]+$/';
     protected const TYPES = [
-        self::TYPE_STRING, self::TYPE_INT, self::TYPE_FLOAT, self::TYPE_BOOL, 'null'
+        self::TYPE_STRING, self::TYPE_INT, self::TYPE_FLOAT, self::TYPE_BOOL, self::TYPE_ARRAY, 'null'
     ];
 
     /** @var string */
@@ -302,7 +312,7 @@ class Argument {
             return $return;
         }
 
-        if ($this->nullable and is_null($value)) return true;
+        if (is_null($value)) return $this->nullable;
         if ($this->type == self::TYPE_FLOAT or $this->type == self::TYPE_INT) {
             return is_numeric($value);
         }
@@ -319,6 +329,16 @@ class Argument {
      */
     public function isRequired() {
         $this->nullable = false;
+        return $this;
+    }
+
+    /**
+     * Can be used multiple times
+     *
+     * @return static
+     */
+    public function isArray() {
+        $this->type = self::TYPE_ARRAY;
         return $this;
     }
 
