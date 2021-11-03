@@ -17,6 +17,7 @@ abstract class ListItem implements Countable, IteratorAggregate, ArrayAccess {
 
     /**
      * Accepted instances for items
+     * @return string 
      */
     abstract protected function itemInstanceOf(): string;
 
