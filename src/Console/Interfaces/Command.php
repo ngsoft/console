@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace NGSOFT\Console\Interfaces;
 
 use NGSOFT\{
-    Console\Argument, STDIO
+    Console\ArgumentList, STDIO
 };
 
 /**
@@ -13,7 +13,7 @@ use NGSOFT\{
  */
 interface Command extends ExitCodes {
 
-    public const VALID_COMMAND_NAME_REGEX = '/^[a-z][a-z0-9\_\-\:]+$/i';
+    public const VALID_COMMAND_NAME_REGEX = '/^[a-z][\w\-\:]*$/i';
 
     /**
      * Get Command Name
@@ -32,9 +32,9 @@ interface Command extends ExitCodes {
     /**
      * Get Command Options
      *
-     * @return Argument[]
+     * @return ArgumentList
      */
-    public function getArguments(): array;
+    public function getArguments(): ArgumentList;
 
     /**
      * Executes the command
