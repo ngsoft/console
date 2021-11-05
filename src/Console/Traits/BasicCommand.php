@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace NGSOFT\Console\Traits;
 
+use InvalidArgumentException;
+use NGSOFT\Console\{
+    ArgumentList, Interfaces\Command
+};
+
 trait BasicCommand {
 
     /** @var ArgumentList */
@@ -21,6 +26,7 @@ trait BasicCommand {
         }
         $this->name = $name;
         $this->help = $help;
+        $this->arguments = new ArgumentList();
     }
 
     /** {@inheritdoc} */

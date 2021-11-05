@@ -4,14 +4,30 @@ declare(strict_types=1);
 
 namespace NGSOFT\Console\Commands;
 
-class Help implements \NGSOFT\Console\Interfaces\Command {
+use NGSOFT\{
+    Console\Application, Console\Argument, Console\Interfaces\Command, Console\Traits\BasicCommand, STDIO
+};
 
-    public function execute($arguments, \NGSOFT\STDIO $io): int {
+class Help implements Command {
 
+    use BasicCommand;
+
+    /** @var Application */
+    protected $app;
+
+    public function __construct(Application $app) {
+
+        $this->app = $app;
+        $this->name = 'help';
+        $this->help = 'This help screen';
+        $this->arguments->add(Argument::create('command', 'Command name.')->isString());
     }
 
-    public function getArguments(): \NGSOFT\Console\ArgumentList {
+    /** {@inheritdoc} */
+    public function execute($arguments, STDIO $io): int {
 
+
+        return self::COMMAND_SUCCESS;
     }
 
 }
