@@ -25,9 +25,16 @@ class Help implements Command {
 
     /** {@inheritdoc} */
     public function execute($arguments, STDIO $io): int {
-
-
+        $command = $this->app;
+        if ($commandName = $arguments['command']) {
+            $command = $this->app[$name];
+        }
+        $this->render($command, $io);
         return self::COMMAND_SUCCESS;
+    }
+
+    protected function render(Command $command, STDIO $io) {
+
     }
 
 }
