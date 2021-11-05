@@ -27,8 +27,9 @@ class Help implements Command {
     public function execute($arguments, STDIO $io): int {
         $command = $this->app;
         if ($commandName = $arguments['command']) {
-            $command = $this->app[$name];
+            $command = $this->app[$commandName] ?? $this->app;
         }
+
         $this->render($command, $io);
         return self::COMMAND_SUCCESS;
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace NGSOFT\Console;
 
 use NGSOFT\{
-    Console\Interfaces\Command, Console\Traits\BasicCommand, Console\Utils\ListItem, STDIO, STDIO\Terminal
+    Console\Commands\Help, Console\Interfaces\Command, Console\Traits\BasicCommand, Console\Utils\ListItem, STDIO, STDIO\Terminal
 };
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -43,8 +43,12 @@ class Application extends ListItem implements Command {
     private function setup() {
         //set up global arguments
         $this->arguments
+                ->add(Argument::create('command', 'Command to run')->isString())
                 ->add(Argument::create('help', 'This help screen.', '-h', '--help')->isBool())
-                ->add(Argument::create('verbosity', 'Set Verbose.', '-v', '--verbose')->isBool());
+                ->add(Argument::create('verbose', 'Verbose.', '-v', '--verbose')->isBool());
+
+        //set up commands
+        $this->add(new Help($this));
     }
 
     ////////////////////////////   Setters   ////////////////////////////
@@ -133,11 +137,14 @@ class Application extends ListItem implements Command {
     /** {@inheritdoc} */
     public function execute(array $arguments, STDIO $io): int {
 
-
-
-
-
-        return self::COMMAND_SUCCESS;
+        $commandName = $arguments['command'];
+        if ($arguments['help']) {
+            return $this['help']->execute(['command' => $commandName], $io);
+        }
+        if (!$commandName) $command = $this->defaultCommand;
+        else $command = $this[$commandName];
+        if (!$command) return self::COMMAND_NOT_FOUND;
+        return $command->execute($arguments, $io);
     }
 
 }
