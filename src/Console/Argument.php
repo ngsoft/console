@@ -317,14 +317,9 @@ class Argument {
             }
             return $return;
         }
-
         if (is_null($value)) return $this->nullable;
-        if ($this->type == self::TYPE_FLOAT or $this->type == self::TYPE_INT) {
-            return is_numeric($value);
-        }
-        if ($this->type == self::TYPE_BOOL) return is_bool($value);
-        if ($this->type == self::TYPE_ARRAY) return is_array($value);
-        return is_string($value);
+        $fnc = sprintf('is_%s', $this->type);
+        return call_user_func($fnc, $value);
     }
 
     ////////////////////////////   Configuration   ////////////////////////////
