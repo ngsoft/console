@@ -16,7 +16,9 @@
     "require-dev": {},
     "require": {
         "php": ">=7.4",
-        "ngsoft/stdio": "^3"
+        "ngsoft/stdio": "^3",
+        "psr/event-dispatcher": "^1",
+        "psr/log": "^1"
 
     },
     "autoload": {
