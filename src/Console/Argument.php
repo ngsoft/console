@@ -289,9 +289,15 @@ class Argument {
         }
 
         if (is_numeric($value)) {
-            if ($this->type == self::TYPE_INT) return intval($value);
-            elseif ($this->type == self::TYPE_FLOAT) return floatval($value);
+            $value = preg_match('/^\d*\.\d+$/', $value) !== false ? floatval($value) : intval($value);
+            if ($this->type == self::TYPE_INT) $value = intval($value);
+            elseif ($this->type == self::TYPE_FLOAT) $value = floatval($value);
         }
+        if (
+                $this->type == self::TYPE_ARRAY and
+                !is_null($value)
+        ) $value = is_array($value) ? $value : [$value];
+        if ($this->type == self::TYPE_BOOL) return $value === true;
 
         return $value;
     }
@@ -317,6 +323,7 @@ class Argument {
             return is_numeric($value);
         }
         if ($this->type == self::TYPE_BOOL) return is_bool($value);
+        if ($this->type == self::TYPE_ARRAY) return is_array($value);
         return is_string($value);
     }
 
