@@ -44,9 +44,10 @@ class Application extends ListItem implements Command {
     }
 
     private function setup() {
-
-        $args = [
-        ];
+        //set up global arguments
+        $this->arguments
+                ->add(Argument::create('help', 'This help screen.', '-h', '--help')->isBool())
+                ->add(Argument::create('verbosity', 'Set Verbose.', '-v', '--verbose')->isBool());
     }
 
     ////////////////////////////   Setters   ////////////////////////////
@@ -84,7 +85,7 @@ class Application extends ListItem implements Command {
      */
     public function add(Command $command, bool $isDefault = false) {
         $this->storage[$command->getName()] = $command;
-        if ($isDefault) $this->defaultCommand = $command;
+        if ($isDefault || !$this->defaultCommand) $this->defaultCommand = $command;
         return $this;
     }
 

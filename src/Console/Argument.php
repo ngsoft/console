@@ -93,8 +93,11 @@ class Argument {
      * @param string $help Message to display with help command
      * @return static
      */
-    public static function create(string $name, string $help) {
-        return new static($name, $help);
+    public static function create(string $name, string $help, string $short = null, string $long = null) {
+        $instance = new static($name, $help);
+        if ($short) $instance->setShort($short);
+        if ($long) $instance->setLong($long);
+        return $instance;
     }
 
     /**
