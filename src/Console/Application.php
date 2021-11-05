@@ -5,17 +5,13 @@ declare(strict_types=1);
 namespace NGSOFT\Console;
 
 use NGSOFT\{
-    Console\Interfaces\Command, Console\Utils\ListItem, STDIO, STDIO\Terminal
+    Console\Interfaces\Command, Console\Traits\BasicCommand, Console\Utils\ListItem, STDIO, STDIO\Terminal
 };
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Application extends ListItem implements Command {
 
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $help;
+    use BasicCommand;
 
     /** @var Terminal */
     private $term;
@@ -31,9 +27,6 @@ class Application extends ListItem implements Command {
 
     /** @var ArgumentParser */
     private $parser;
-
-    /** @var Argumentlist */
-    private $arguments;
 
     public function __construct(string $name = null, string $help = null) {
         $this->name = $name ?? basename($_SERVER['argv'][0]);
@@ -125,21 +118,6 @@ class Application extends ListItem implements Command {
 
 
         return self::COMMAND_SUCCESS;
-    }
-
-    /** {@inheritdoc} */
-    public function getArguments(): ArgumentList {
-        return $this->arguments;
-    }
-
-    /** {@inheritdoc} */
-    public function getHelp(): string {
-        return $this->help;
-    }
-
-    /** {@inheritdoc} */
-    public function getName(): string {
-        return $this->name;
     }
 
 }

@@ -19,17 +19,21 @@ trait BasicCommand {
         if (!preg_match(Command::VALID_COMMAND_NAME_REGEX, $name)) {
             throw new InvalidArgumentException('Invalid command name "' . $name . '"');
         }
+        $this->name = $name;
         $this->help = $help;
     }
 
+    /** {@inheritdoc} */
     public function getArguments(): ArgumentList {
         return $this->arguments;
     }
 
+    /** {@inheritdoc} */
     public function getHelp(): string {
         return $this->help;
     }
 
+    /** {@inheritdoc} */
     public function getName(): string {
         return $this->name;
     }
