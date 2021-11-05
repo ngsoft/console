@@ -28,11 +28,15 @@ class Application extends ListItem implements Command {
     /** @var ArgumentParser */
     private $parser;
 
-    public function __construct(string $name = null, string $help = null) {
+    /** @var STDIO */
+    private $io;
+
+    public function __construct(string $name = null, string $help = null, STDIO $stdio = null) {
         $this->name = $name ?? basename($_SERVER['argv'][0]);
         $this->help = $help ?? '';
         $this->parser = new ArgumentParser();
         $this->arguments = new ArgumentList();
+        $this->io = $stdio ?? STDIO::create();
         $this->setup();
     }
 
@@ -101,6 +105,22 @@ class Application extends ListItem implements Command {
      */
     public function has(string $name): bool {
         return $this->offsetExists($name);
+    }
+
+    /**
+     * Executes the Application
+     *
+     * @param ?array $args
+     * @return int
+     */
+    public function run(array $args = null): int {
+        if (is_null($args)) {
+            $args = $_SERVER['argv'];
+            array_shift($args);
+        }
+        $result = $this->execute($args, $this->io);
+        if ($this->autoExit) exit($result);
+        return $result;
     }
 
     ////////////////////////////   Interfaces   ////////////////////////////
