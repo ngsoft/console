@@ -30,8 +30,39 @@ class ArgumentList extends ListItem {
         if (!$nullable) $arg->isRequired();
         $short && $arg->setShort($short);
         $long && $arg->setLong($long);
-        $this->storage[$name] = $arg;
+        $this->add($arg);
         return $arg;
+    }
+
+    /**
+     * Add an Argument
+     *
+     * @param Argument $argument
+     * @return static
+     */
+    public function add(Argument $argument) {
+        $this->offsetSet($argument->getName(), $argument);
+        return $this;
+    }
+
+    /**
+     * Checks if argument exists
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function has(string $name): bool {
+        return $this->offsetExists($name);
+    }
+
+    /**
+     * Get Argument by name
+     *
+     * @param string $name
+     * @return Argument|null
+     */
+    public function get(string $name): ?Argument {
+        return $this->offsetGet($name) ?? null;
     }
 
 }

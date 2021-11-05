@@ -40,6 +40,13 @@ class Application extends ListItem implements Command {
         $this->help = $help ?? '';
         $this->parser = new ArgumentParser();
         $this->arguments = new ArgumentList();
+        $this->setup();
+    }
+
+    private function setup() {
+
+        $args = [
+        ];
     }
 
     ////////////////////////////   Setters   ////////////////////////////
