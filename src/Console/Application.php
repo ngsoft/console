@@ -37,6 +37,7 @@ class Application extends ListItem implements Command {
         $this->parser = new ArgumentParser();
         $this->arguments = new ArgumentList();
         $this->io = $stdio ?? STDIO::create();
+        $this->term = $this->io->getTerminal();
         $this->setup();
     }
 
@@ -122,6 +123,11 @@ class Application extends ListItem implements Command {
             $args = $_SERVER['argv'];
             array_shift($args);
         }
+
+
+        //command parser
+
+
         $result = $this->execute($args, $this->io);
         if ($this->autoExit) exit($result);
         return $result;
