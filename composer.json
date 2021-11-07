@@ -13,11 +13,13 @@
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "require-dev": {},
+    "require-dev": {
+        "psr/event-dispatcher": "^1"
+    },
     "require": {
         "php": ">=7.4",
         "ngsoft/stdio": "^3",
-        "psr/event-dispatcher": "^1",
+
         "psr/log": "^1"
 
     },
