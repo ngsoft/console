@@ -37,9 +37,12 @@ final class Logger extends self implements LoggerInterface, Verbosity {
         $this->output = $output ?? new Output();
     }
 
+    /** {@inheritdoc} */
     public function log($level, $message, array $context = []) {
-
-        $method = 'write';
+        if ((self::MAP[$level] ?? self::VERBOSITY_NORMAL) <= $this->verbosity) {
+            $str = sprintf('<%s>[%s]</%s> %s', strtolower($level), strtoupper($level), strtolower($level), $message);
+            $this->output->write($str);
+        }
     }
 
     /**
