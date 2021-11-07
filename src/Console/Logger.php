@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace NGSOFT\Console;
 
-use NGSOFT\{
-    Console\Interfaces\Verbosity, Console\Outputs\Output, STDIO\Outputs\StreamOutput
+use NGSOFT\Console\{
+    Interfaces\Verbosity, Outputs\Output
 };
 use Psr\Log\{
-    LoggerInterface, LoggerTrait, self
+    LoggerInterface, LoggerTrait, LogLevel
 };
 
-final class Logger extends self implements LoggerInterface, Verbosity {
+final class Logger extends LogLevel implements LoggerInterface, Verbosity {
 
     use LoggerTrait;
 
@@ -39,8 +39,12 @@ final class Logger extends self implements LoggerInterface, Verbosity {
 
     /** {@inheritdoc} */
     public function log($level, $message, array $context = []) {
-        if ((self::MAP[$level] ?? self::VERBOSITY_NORMAL) <= $this->verbosity) {
-            $str = sprintf('<%s>[%s]</%s> %s', strtolower($level), strtoupper($level), strtolower($level), $message);
+        if ($this->verbosity >= (self::MAP[$level] ?? self::VERBOSITY_NORMAL)) {
+            $str = sprintf(
+                    "<%s>[%s]</%s> %s\n",
+                    strtolower($level), strtoupper($level), strtolower($level),
+                    $message
+            );
             $this->output->write($str);
         }
     }
