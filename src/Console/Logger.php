@@ -8,12 +8,17 @@ use NGSOFT\Console\{
     Interfaces\Verbosity, Outputs\Output
 };
 use Psr\Log\{
-    LoggerInterface, LoggerTrait, LogLevel
+    LoggerAwareTrait, LoggerInterface, LoggerTrait, LogLevel
 };
 
+/**
+ * Logger that outputs log message using the verbosity Flag
+ * and can use an external logger to log messages
+ */
 final class Logger extends LogLevel implements LoggerInterface, Verbosity {
 
-    use LoggerTrait;
+    use LoggerTrait,
+        LoggerAwareTrait;
 
     private const MAP = [
         self::EMERGENCY => self::VERBOSITY_NORMAL,
@@ -42,11 +47,13 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
         if ($this->verbosity >= (self::MAP[$level] ?? self::VERBOSITY_NORMAL)) {
             $str = sprintf(
                     "<%s>[%s]</%s> %s\n",
-                    strtolower($level), strtoupper($level), strtolower($level),
+                    $level, strtoupper($level), $level,
                     $message
             );
             $this->output->write($str);
         }
+
+        if ($this->logger) $this->logger->log($str, $message, $context);
     }
 
     /**
@@ -59,7 +66,8 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
     }
 
     /**
-     *
+     * Set Verbosity level
+     * 
      * @param int $verbosity
      */
     public function setVerbosity(int $verbosity) {
