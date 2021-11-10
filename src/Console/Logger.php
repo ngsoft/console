@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NGSOFT\Console;
 
+use InvalidArgumentException;
 use NGSOFT\Console\{
     Interfaces\Verbosity, Outputs\Output
 };
@@ -20,6 +21,8 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
     use LoggerTrait,
         LoggerAwareTrait;
 
+    private const OUTPUT_NORMAL = 1;
+    private const OUTPUT_ERROR = 2;
     private const MAP = [
         self::EMERGENCY => self::VERBOSITY_NORMAL,
         self::ALERT => self::VERBOSITY_NORMAL,
@@ -29,6 +32,16 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
         self::NOTICE => self::VERBOSITY_VERBOSE,
         self::INFO => self::VERBOSITY_VERY_VERBOSE,
         self::DEBUG => self::VERBOSITY_DEBUG,
+    ];
+    private const OUTPUTS = [
+        self::EMERGENCY => self::OUTPUT_ERROR,
+        self::ALERT => self::OUTPUT_ERROR,
+        self::CRITICAL => self::OUTPUT_ERROR,
+        self::ERROR => self::OUTPUT_ERROR,
+        self::WARNING => self::OUTPUT_NORMAL,
+        self::NOTICE => self::OUTPUT_NORMAL,
+        self::INFO => self::OUTPUT_NORMAL,
+        self::DEBUG => self::OUTPUT_NORMAL,
     ];
 
     /** @var Output */
@@ -44,13 +57,21 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
 
     /** {@inheritdoc} */
     public function log($level, $message, array $context = []) {
+
+        if (!in_array($level, array_keys(self::MAP))) {
+            throw new InvalidArgumentException('Invalid log level ' . $level);
+        }
+
+
         if ($this->verbosity >= (self::MAP[$level] ?? self::VERBOSITY_NORMAL)) {
             $str = sprintf(
                     "<%s>[%s]</%s> %s\n",
                     $level, strtoupper($level), $level,
                     $message
             );
-            $this->output->write($str);
+
+            if (self::OUTPUTS[$level] == self::OUTPUT_NORMAL) $this->output->write($str);
+            else $this->output->writeError($str);
         }
 
         if ($this->logger) $this->logger->log($str, $message, $context);
@@ -67,7 +88,7 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
 
     /**
      * Set Verbosity level
-     * 
+     *
      * @param int $verbosity
      */
     public function setVerbosity(int $verbosity) {

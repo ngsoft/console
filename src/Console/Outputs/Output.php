@@ -31,6 +31,15 @@ final class Output {
         $this->output->write($this->formatter->format($message));
     }
 
+    /**
+     * Write a line
+     *
+     * @param string $message
+     */
+    public function writeln(string $message) {
+        $this->write($message . "\n");
+    }
+
     /** {@inheritdoc} */
     public function writeError(string $message) {
         $this->errorOutput->write($this->formatter->format($message));
