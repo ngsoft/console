@@ -45,7 +45,8 @@ class Application implements Command {
         $this->arguments
                 ->add(Argument::create('command', 'Command to run')->isString())
                 ->add(Argument::create('help', 'This help screen.', '-h', '--help')->isBool())
-                ->add(Argument::create('verbose', 'Verbose.', '-v', '--verbose')->isInt()->setValue(Verbosity::VERBOSITY_NORMAL));
+                ->add(Argument::create('verbose', 'Verbose.', '-v', '--verbose')->isInt()->setValue(Verbosity::VERBOSITY_NORMAL))
+                ->add(Argument::create('quiet', 'Set Verbosity to quiet.', '-q', '--quiet')->isBool());
 
         //set up commands
         $this->add(new Help($this));
