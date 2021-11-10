@@ -58,6 +58,9 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
     /** @var int */
     private $verbosity = self::VERBOSITY_NORMAL;
 
+    /** @var bool */
+    private $silent = false;
+
     public function __construct(Output $output = null) {
         $this->output = $output ?? new Output();
     }
@@ -76,9 +79,11 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
                     $level, strtoupper($level), $level,
                     $message
             );
-
-            if (self::OUTPUTS[$level] == self::OUTPUT_NORMAL) $this->output->write($str);
-            else $this->output->writeError($str);
+            if (!$this->silent) {
+                if (self::OUTPUTS[$level] == self::OUTPUT_NORMAL) $this->output->write($str);
+                else $this->output->writeError($str);
+            }
+            $this->silent = false;
         }
 
         if ($this->logger) $this->logger->log($str, $message, $context);
@@ -100,6 +105,19 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
      */
     public function setVerbosity(int $verbosity) {
         $this->verbosity = $verbosity;
+    }
+
+    /**
+     * Set silent for the next log
+     * Used to handle errors
+     * If a logger like monolog is registered the log will be added even if silent
+     *
+     * @param bool $silent
+     * @return static
+     */
+    public function setSilent(bool $silent = true) {
+        $this->silent = $silent;
+        return $this;
     }
 
 }
