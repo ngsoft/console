@@ -86,7 +86,7 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
             $this->silent = false;
         }
 
-        if ($this->logger) $this->logger->log($str, $message, $context);
+        if ($this->logger) $this->logger->log($level, $message, $context);
     }
 
     /**

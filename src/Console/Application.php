@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace NGSOFT\Console;
 
 use NGSOFT\{
-    Console\Commands\Help, Console\Interfaces\Command, Console\Traits\BasicCommand, Console\Utils\ListItem, STDIO, STDIO\Terminal
+    Console\Commands\Help, Console\Interfaces\Command, Console\Interfaces\Verbosity, STDIO, STDIO\Terminal
 };
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class Application extends ListItem implements Command {
-
-    use BasicCommand;
+class Application implements Command {
 
     /** @var Terminal */
     private $term;
@@ -35,9 +33,10 @@ class Application extends ListItem implements Command {
         $this->name = $name ?? basename($_SERVER['argv'][0]);
         $this->help = $help ?? '';
         $this->parser = new ArgumentParser();
-        $this->arguments = new ArgumentList();
-        $this->io = $stdio ?? STDIO::create();
-        $this->term = $this->io->getTerminal();
+
+        $stdio = $stdio ?? STDIO::create();
+        $this->io = $stdio;
+        $this->term = $stdio->getTerminal();
         $this->setup();
     }
 
@@ -46,7 +45,7 @@ class Application extends ListItem implements Command {
         $this->arguments
                 ->add(Argument::create('command', 'Command to run')->isString())
                 ->add(Argument::create('help', 'This help screen.', '-h', '--help')->isBool())
-                ->add(Argument::create('verbose', 'Verbose.', '-v', '--verbose')->isBool());
+                ->add(Argument::create('verbose', 'Verbose.', '-v', '--verbose')->isInt()->setValue(Verbosity::VERBOSITY_NORMAL));
 
         //set up commands
         $this->add(new Help($this));
