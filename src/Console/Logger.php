@@ -23,6 +23,10 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
 
     private const OUTPUT_NORMAL = 1;
     private const OUTPUT_ERROR = 2;
+
+    /**
+     * Map verbosity with LogLevel
+     */
     private const MAP = [
         self::EMERGENCY => self::VERBOSITY_NORMAL,
         self::ALERT => self::VERBOSITY_NORMAL,
@@ -33,6 +37,10 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
         self::INFO => self::VERBOSITY_VERY_VERBOSE,
         self::DEBUG => self::VERBOSITY_DEBUG,
     ];
+
+    /**
+     * Outputs to use
+     */
     private const OUTPUTS = [
         self::EMERGENCY => self::OUTPUT_ERROR,
         self::ALERT => self::OUTPUT_ERROR,
@@ -51,7 +59,6 @@ final class Logger extends LogLevel implements LoggerInterface, Verbosity {
     private $verbosity = self::VERBOSITY_NORMAL;
 
     public function __construct(Output $output = null) {
-
         $this->output = $output ?? new Output();
     }
 
